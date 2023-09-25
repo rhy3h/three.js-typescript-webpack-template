@@ -2,7 +2,7 @@ import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import UglifyJsPlugin from "uglifyjs-webpack-plugin";
+import TerserPlugin from "terser-webpack-plugin";
 
 module.exports = {
   entry: "./src/index.ts",
@@ -14,8 +14,8 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        test: /\.s[ac]ss$/i,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
     ],
   },
@@ -26,7 +26,7 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   output: {
-    filename: "[name].[fullhash].bundle.js",
+    filename: "[name].[chunkhash].bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
   optimization: {
@@ -34,10 +34,8 @@ module.exports = {
       chunks: "all",
     },
     minimizer: [
-      new UglifyJsPlugin({
-        extractComments: false,
-        uglifyOptions: {
-          warnings: false,
+      new TerserPlugin({
+        terserOptions: {
           compress: {
             drop_console: true,
           },
@@ -50,7 +48,9 @@ module.exports = {
       template: "./public/index.html",
       favicon: "./public/favicon.ico",
     }),
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({
+      filename: "./css/[name].[chunkhash].bundle.css",
+    }),
     new CleanWebpackPlugin(),
   ],
   devServer: {
