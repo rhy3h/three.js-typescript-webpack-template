@@ -36,7 +36,7 @@ function init() {
 
     const geometry = new BoxGeometry(1, 1, 1);
     const material = new MeshBasicNodeMaterial();
-    material.colorNode = color( 0x000000 );
+    material.colorNode = color(0x000000);
 
     cube = new Mesh(geometry, material);
     scene.add(cube);
